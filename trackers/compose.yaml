@@ -1,0 +1,60 @@
+version: "3.8"
+services:
+  ryot:
+    image: ignisda/ryot:latest
+    pull_policy: always
+    container_name: ryot
+    ports:
+      - 8010:8000
+    environment:
+      - TZ=${TZ}
+      - DATABASE_URL=postgres://postgres:postgres@192.168.0.12:5432/ryot
+      - SERVER_ADMIN_ACCESS_TOKEN=${SERVER_ADMIN_ACCESS_TOKEN}
+      - SERVER_IMPORTER_TRAKT_CLIENT_ID=7b1f82f1eacf9c671c468db10525c226c136cd11548b98d4bb06368566e05de2
+      - MOVIES_AND_SHOWS_TMDB_ACCESS_TOKEN=${MOVIES_AND_SHOWS_TMDB_ACCESS_TOKEN}
+      - SERVER_IMPORTER_TRAKT_CLIENT_SECRET=${SERVER_IMPORTER_TRAKT_CLIENT_SECRET}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+  watcharr:
+    image: ghcr.io/sbondco/watcharr:latest
+    container_name: watcharr
+    ports:
+      - 3080:3080
+    volumes:
+      - ./appdata/watcharr/data:/data
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+  agregarr:
+    image: agregarr/agregarr:latest
+    container_name: agregarr
+    volumes:
+      - ./appdata/agregarr/config:/app/config
+      - ${MEDIA_ROOT}/truenas/tv/:/tv
+      - ${MEDIA_ROOT}/truenas/anime/:/anime
+      - ${MEDIA_ROOT}/ugreen/movies:/movies
+    ports:
+      - 7171:7171
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+networks:
+  default:
+    name: shared
+    external: true

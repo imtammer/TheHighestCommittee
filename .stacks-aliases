@@ -1,0 +1,38 @@
+# Add these aliases to your ~/.bashrc or ~/.zshrc
+# source ~/.stacks-aliases to load them
+
+# Master orchestration
+alias stacks-check="orchestrate.sh check-all"
+alias stacks-health="orchestrate.sh health-all"
+alias stacks-status="orchestrate.sh status-all"
+alias stacks-sync="orchestrate.sh sync-all"
+alias stacks-push="orchestrate.sh push-all"
+alias stacks-start="orchestrate.sh start-all"
+alias stacks-stop="orchestrate.sh stop-all"
+
+# TamMediaBox shortcuts
+alias tmb-check="orchestrate.sh tmb check"
+alias tmb-health="orchestrate.sh tmb health"
+alias tmb-ps="orchestrate.sh tmb ps"
+alias tmb-logs="orchestrate.sh tmb logs"
+alias tmb-restart="orchestrate.sh tmb restart"
+alias tmb-plex-logs="orchestrate.sh tmb logs plex"
+alias tmb-jellyfin-logs="orchestrate.sh tmb logs jellyfin"
+
+# AI Docker Host shortcuts
+alias ai-check="orchestrate.sh ai check"
+alias ai-health="orchestrate.sh ai health"
+alias ai-gpu="orchestrate.sh ai health | grep -A5 GPU"
+alias ai-ollama-start="orchestrate.sh ai start ollama"
+alias ai-paperless-start="orchestrate.sh ai start paperless"
+alias ai-ollama-logs="orchestrate.sh ai logs ollama"
+alias ai-paperless-logs="orchestrate.sh ai logs paperless"
+
+# Logs
+alias stacks-logs="tail -f /var/log/stacks/*.log"
+alias tmb-log="tail -f /opt/stacks/TamMediaBox/sync.log"
+alias ai-log="tail -f /opt/stacks/AI_Docker_Host/sync.log"
+
+# Help
+alias stacks-help="orchestrate.sh --help"
+alias stacks-quick="bash /opt/stacks/scripts/quick-ref.sh"

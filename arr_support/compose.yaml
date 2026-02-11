@@ -1,0 +1,155 @@
+services:
+  suggestarr:
+    image: ciuse99/suggestarr:latest
+    container_name: SuggestArr
+    restart: always
+    ports:
+      - 5000:5000
+    volumes:
+      - ./appdata/suggestarr/config:/app/config
+    environment:
+      - LOG_LEVEL=info
+      - SUGGESTARR_PORT=5000
+      - SUGGESTARR_TMDB_API_KEY=${SUGGESTARR_TMDB_API_KEY}
+      - SUGGESTARR_OVERSEERR_URL=http://192.168.0.11:5055
+      - SUGGESTARR_OVERSEERR_API_KEY=${SUGGESTARR_OVERSEERR_API_KEY}
+      - SUGGESTARR_OVERSEERR_API_KEY=${SUGGESTARR_OVERSEERR_API_KEY}
+      - SUGGESTARR_CRON_SCHEDULE="0 0 * * *"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+  tunarr:
+    image: chrisbenincasa/tunarr:latest
+    container_name: tunarr
+    ports:
+      - 8888:8000
+    environment:
+      - LOG_LEVEL=INFO
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+    volumes:
+      - ${MEDIA_ROOT}/ugreen/arrstack/appdata/tunarr/data:/config/tunarr
+  huntarr:
+    image: huntarr/huntarr:latest
+    container_name: huntarr
+    restart: always
+    ports:
+      - 9705:9705
+    volumes:
+      - ./appdata/huntarr:/config
+    environment:
+      - TZ=${TZ}
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+  wizarr:
+    container_name: wizarr
+    image: ghcr.io/wizarrrr/wizarr:latest
+    ports:
+      - 5690:5690
+    volumes:
+      - ./appdata/wizarr/data:/data
+  maintainerr:
+    image: ghcr.io/maintainerr/maintainerr:latest
+    container_name: maintainerr
+    user: ${PUID}:${PGID}
+    volumes:
+      - type: bind
+        source: ./appdata/maintainerr/data
+        target: /opt/data
+    environment:
+      - TZ=${TZ}
+    ports:
+      - 6246:6246
+    restart: unless-stopped
+  metube:
+    image: ghcr.io/alexta69/metube
+    container_name: metube
+    restart: unless-stopped
+    ports:
+      - 8881:8081
+    volumes:
+      - ${MEDIA_ROOT}/truenas/downloads/:/downloads
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+  cleanuparr:
+    image: ghcr.io/cleanuparr/cleanuparr:latest
+    container_name: cleanuparr
+    restart: unless-stopped
+    ports:
+      - 11011:11011
+    volumes:
+      - ./appdata/cleanuparr/config:/config
+    environment:
+      - PORT=11011
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://192.168.0.11:11011/health
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+  daps:
+    image: drazzilb08/daps
+    container_name: daps
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ./appdata/daps/config:/config
+      - ./appdata/kometa/assets/:/kometa
+      - ./appdata/kometa/posters:/posters
+      - ${MEDIA_ROOT}/:/media
+    ports:
+      - 8008:8000
+    restart: unless-stopped
+  quickstart:
+    image: kometateam/quickstart:develop
+    container_name: quickstart
+    ports:
+      - 7172:7171
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ./appdata/kometa-quickstart/config:/config
+    restart: unless-stopped
+  sortarr:
+    image: ghcr.io/jaredharper1/sortarr:latest
+    container_name: sortarr
+    ports:
+      - 9595:8787
+    environment:
+      - SORTARR_CONFIG_PATH=./appdata/sortarr/data/Sortarr.env
+      - CACHE_SECONDS=300
+    volumes:
+      - ./appdata/sortarr/data:/data
+      - ${MEDIA_ROOT}/:${MEDIA_ROOT}/
+    restart: unless-stopped
+
+networks:
+  default:
+    name: shared
+    external: true

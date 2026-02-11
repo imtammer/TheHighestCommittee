@@ -1,0 +1,58 @@
+version: "3.8"
+services:
+  manuel-rw:
+    ports:
+      - '3300:3000'
+    environment:
+        - DISCORD_CLIENT_TOKEN=${DISCORD_CLIENT_TOKEN}
+        - JELLYFIN_SERVER_ADDRESS=http://192.168.0.13:8096
+        - JELLYFIN_AUTHENTICATION_USERNAME=${JELLYFIN_AUTHENTICATION_USERNAME}
+        - JELLYFIN_AUTHENTICATION_PASSWORD=${JELLYFIN_AUTH_PASS}
+    image: 'ghcr.io/manuel-rw/jellyfin-discord-music-bot:latest'
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+ 
+  muse:
+    image: ghcr.io/museofficial/muse:pr-1287
+    restart: always
+    volumes:
+      - ./muse/data:/data
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+  
+  discodrome:
+    image: 7eventy7/discodrome:latest
+    container_name: discodrome
+    restart: always
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - SUBSONIC_SERVER=http://192.168.0.11:4533
+      - SUBSONIC_USER=${SUBSONIC_USER}
+      - SUBSONIC_PASSWORD=${SUBSONIC_PASS}
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - DISCORD_TEST_GUILD=${DISCORD_TEST_GUILD}
+      - DISCORD_OWNER_ID=${DISCORD_OWNER_ID}
+    volumes:
+      - ./discodrome/data/:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+networks:
+  default:
+    name: shared
+    external: true

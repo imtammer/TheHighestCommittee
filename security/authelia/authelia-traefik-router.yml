@@ -1,0 +1,46 @@
+---
+###############################################################################
+#                   Authelia Traefik Router Configuration                     #
+###############################################################################
+#
+# This file configures Traefik to route authelia.thehighestcommittee.com
+# to the Authelia service running on 192.168.0.11:9091
+#
+# This file should be copied to the Traefik server at:
+#   /etc/traefik/conf.d/authelia-router.yml
+#
+# After copying, restart Traefik:
+#   ssh root@192.168.0.2 "systemctl restart traefik"
+#
+###############################################################################
+
+http:
+  routers:
+    authelia:
+      rule: "Host(`authelia.thehighestcommittee.com`)"
+      service: authelia
+      entryPoints:
+        - websecure
+      tls: {}
+      # NOTE: Authelia should NOT have the authelia middleware
+      # (would create an infinite auth loop)
+
+  services:
+    authelia:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.11:9091"
+        passHostHeader: true
+
+###############################################################################
+# Architecture Notes:
+#
+# - Authelia runs on: 192.168.0.11 (osiris)
+# - Traefik runs on: 192.168.0.2
+# - Communication: Traefik → HTTP → 192.168.0.11:9091
+# - Public access: https://authelia.thehighestcommittee.com → Traefik → Authelia
+#
+# The ForwardAuth middleware (in authelia-middleware.yml) also points to
+# http://192.168.0.11:9091/api/verify for authentication verification.
+#
+###############################################################################

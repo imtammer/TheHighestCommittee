@@ -1,0 +1,62 @@
+services:
+    romm:
+        image: rommapp/romm:latest
+        container_name: romm
+        env_file:
+            - .env
+        restart: unless-stopped
+        environment:
+            - DB_HOST=romm-db
+            - DB_NAME=romm # Should match MARIADB_DATABASE in mariadb
+            - DB_USER=${DB_USER} # Should match MARIADB_USER in mariadb
+            - DB_PASSWD=${DB_PASSWD} # Should match MARIADB_PASSWORD in mariadb
+            - ROMM_AUTH_SECRET_KEY=${ROMM_AUTH_SECRET_KEY} # Generate a key with `openssl rand -hex 32`
+            - SCREENSCRAPER_USER=${SCREENSCRAPER_USER} # These are the recommended metadata providers
+            - SCREENSCRAPER_PASSWORD=${SCREENSCRAPER_PASSWORD} # https://docs.romm.app/latest/Getting-Started/Metadata-Providers/#screenscraper
+            - RETROACHIEVEMENTS_API_KEY=${RETROACHIEVEMENTS_API_KEY} # https://docs.romm.app/latest/Getting-Started/Metadata-Providers/#retroachievements
+            - STEAMGRIDDB_API_KEY=${STEAMGRIDDB_API_KEY} # https://docs.romm.app/latest/Getting-Started/Metadata-Providers/#steamgriddb
+            - HASHEOUS_API_ENABLED=true # https://docs.romm.app/latest/Getting-Started/Metadata-Providers/#hasheous
+        volumes:
+            - ${MEDIA_ROOT}/ugreen/arrstack/romm/romm_resources:/romm/resources # Resources fetched from IGDB (covers, screenshots, etc.)
+            - ${MEDIA_ROOT}/ugreen/arrstack/romm/romm_redis_data:/redis-data # Cached data for background tasks
+            - ${MEDIA_ROOT}/truenas/roms:/romm/library # Your game library. Check https://github.com/rommapp/romm?tab=readme-ov-file#folder-structure for more details.
+            - ${MEDIA_ROOT}/truenas/roms_assets:/romm/assets # Uploaded saves, states, etc.
+            - ${MEDIA_ROOT}/ugreen/arrstack/romm/config:/romm/config # Path where config.yml is stored
+        ports:
+            - 8808:8080
+        depends_on:
+            romm-db:
+                condition: service_healthy
+                restart: true
+        deploy:
+            resources:
+                limits:
+                    cpus: '1.0'
+                    memory: 2G
+
+    romm-db:
+        image: mariadb:latest
+        container_name: romm-db
+        restart: unless-stopped
+        environment:
+            - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+            - MARIADB_DATABASE=romm
+            - MARIADB_USER=${MARIADB_USER}
+            - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+        volumes:
+            - ${MEDIA_ROOT}/ugreen/arrstack/romm/mysql_data:/var/lib/mysql
+        healthcheck:
+            test: "mariadb-admin ping -h localhost -uroot -p${MARIADB_ROOT_PASSWORD}"
+            start_period: 30s
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        deploy:
+            resources:
+                limits:
+                    cpus: '1.0'
+                    memory: 1G
+networks:
+  default:
+    name: shared
+    external: true

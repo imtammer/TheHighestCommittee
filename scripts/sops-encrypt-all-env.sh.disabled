@@ -1,0 +1,12 @@
+#!/bin/bash
+# Encrypt all .env files in stack subdirectories using SOPS and age
+# Usage: ./sops-encrypt-all-env.sh
+
+AGE_PUBKEY="age1pm3d8jcve9x5x2fzwut6zgvvu2kq0ak5qaacf8mxrgu5l00zq9ks52yzuj"
+
+find /opt/stacks -maxdepth 2 -type f -name ".env" | while read -r envfile; do
+  echo "Encrypting $envfile ..."
+  sops --age "$AGE_PUBKEY" --encrypt --in-place "$envfile"
+done
+
+echo "All .env files encrypted with SOPS and age."

@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  authelia:
+    image: authelia/authelia:latest
+    container_name: authelia
+    hostname: authelia
+    restart: unless-stopped
+
+    volumes:
+      - /opt/stacks/appdata/authelia/config:/config
+      - /opt/stacks/appdata/authelia/secrets:/secrets:ro
+      - /opt/stacks/appdata/authelia/data:/data
+
+    environment:
+      - TZ=America/Los_Angeles
+      - AUTHELIA_JWT_SECRET_FILE=/secrets/jwt_secret
+      - AUTHELIA_SESSION_SECRET_FILE=/secrets/session_secret
+      - AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE=/secrets/storage_encryption_key
+      # OIDC disabled for initial deployment
+      # - AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET_FILE=/secrets/oidc_hmac_secret
+      # - AUTHELIA_IDENTITY_PROVIDERS_OIDC_ISSUER_PRIVATE_KEY_FILE=/secrets/oidc_private_key
+
+    ports:
+      - "9091:9091"
+
+    networks:
+      - authelia
+      - security_default
+
+    # NOTE: Traefik labels removed because Traefik runs on different host (192.168.0.2)
+    # Authelia routing is configured via static file on Traefik server
+    # See: authelia-traefik-router.yml
+
+  # Redis for session storage
+  redis:
+    image: redis:alpine
+    container_name: authelia-redis
+    hostname: redis
+    restart: unless-stopped
+
+    volumes:
+      - /opt/stacks/appdata/authelia/redis:/data
+
+    networks:
+      - authelia
+
+    command: redis-server --save 60 1 --loglevel warning
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+
+networks:
+  authelia:
+    name: authelia
+    driver: bridge
+  security_default:
+    external: true
+    name: security_default

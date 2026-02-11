@@ -1,0 +1,198 @@
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    ports:
+      - 13378:80
+    volumes:
+      - ./appdata/audiobookshelf/config:/config
+      - ./appdata/audiobookshelf/metadata/:/metadata
+      - ${MEDIA_ROOT}/truenas/AudioBooks:/audiobooks
+      - ${MEDIA_ROOT}/truenas/podcasts:/podcasts
+      - ${MEDIA_ROOT}/truenas/downloads/complete/books/:/books
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+  kavita:
+    image: ghcr.io/kareadita/kavita:nightly
+    container_name: kavita
+    volumes:
+      - ./appdata/kavita/config:/kavita/config
+      - ${MEDIA_ROOT}/truenas/Comics:/manga
+      - ${MEDIA_ROOT}/truenas/books:/books
+      - ${MEDIA_ROOT}/truenas/manga:/comics
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    ports:
+      - 5002:5000
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+  readarr:
+    ports:
+      - 8787:8787
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ./appdata/bookshelf_config:/config
+      - ${MEDIA_ROOT}/:${MEDIA_ROOT}/
+    image: ghcr.io/pennydreadful/bookshelf:hardcover
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+  listenarr:
+    ports:
+      - 8788:8787
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ./appdata/bookshelf_audio/config:/config
+      - ${MEDIA_ROOT}/:${MEDIA_ROOT}/
+    image: ghcr.io/pennydreadful/bookshelf:hardcover
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+  openbooks:
+    image: evanbuss/openbooks:edge
+    command:
+      - -n tammer
+      - --persist
+    container_name: OpenBooks
+    hostname: openbooks
+    ports:
+      - 6081:80
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${MEDIA_ROOT}/truenas/downloads/complete/books/:/books
+    restart: on-failure:5
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+  ABR:
+    image: markbeep/audiobookrequest:1
+    ports:
+      - 8088:8000
+    volumes:
+      - ./appdata/abr/config:/config
+      - ${MEDIA_ROOT}/:${MEDIA_ROOT}/
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+  shelfmark:
+    image: ghcr.io/calibrain/shelfmark:latest
+    container_name: shelfmark
+    environment:
+      TZ: ${TZ}
+      PUID: 1000
+      PGID: 1000
+    ports:
+      - 8084:8084
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+    volumes:
+      - ${MEDIA_ROOT}/truenas/Books:/books
+      - ${MEDIA_ROOT}/truenas/AudioBooks:/audiobooks
+      - ./appdata/shelfmark/config:/config
+      - ${MEDIA_ROOT}/truenas/downloads/complete/:/downloads
+      - ${MEDIA_ROOT}/truenas/:${MEDIA_ROOT}/truenas/
+  booklore:
+    image: booklore/booklore:latest
+    container_name: booklore
+    environment:
+      - USER_ID=${USER_ID}
+      - GROUP_ID=1000
+      - TZ=${TZ}
+      - DATABASE_URL=jdbc:mariadb://mariadb:3306/booklore
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - BOOKLORE_PORT=6060
+      - SWAGGER_ENABLED=false
+      - FORCE_DISABLE_OIDC=false                            # Set to 'true' to force-disable OIDC and allow internal login, regardless of UI config
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "6060:6060"
+    volumes:
+      - ./booklore/data:/app/data       # Application data (settings, metadata, cache, etc.). Persist this folder to retain your library state across container restarts.
+      - ${MEDIA_ROOT}/truenas/Books:/books         # Primary book library folder. Mount your collection here so BookLore can access and organize your books.
+      - ${MEDIA_ROOT}/truenas/downloads/complete/books:/bookdrop   # BookDrop folder. Files placed here are automatically detected and prepared for import.
+      - ${MEDIA_ROOT}/truenas/Comics:/comics
+      - ${MEDIA_ROOT}/truenas/manga:/manga
+    healthcheck:
+      test: wget -q -O - http://localhost:6060/api/v1/healthcheck
+      interval: 60s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+
+  mariadb:
+    image: lscr.io/linuxserver/mariadb:11.4.8
+    container_name: mariadb
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Etc/UTC
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}  # Use a strong password for the database's root user, should be different from MYSQL_PASSWORD
+      - MYSQL_DATABASE=booklore
+      - MYSQL_USER=${MYSQL_USER}                        # Must match DATABASE_USERNAME defined in the booklore container
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}        # Use a strong password; must match DATABASE_PASSWORD defined in the booklore container
+    volumes:
+      - ./mariadb/config:/config
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+    healthcheck:
+      test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+networks:
+  default:
+    name: shared
+    external: true

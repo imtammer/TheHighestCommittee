@@ -1,0 +1,66 @@
+# ═══════════════════════════════════════════════════════════════
+# Secrets & Sensitive Files - NEVER COMMIT
+# ═══════════════════════════════════════════════════════════════
+
+# Environment files with secrets
+.env
+*.env
+!.env.example
+!.env.enc
+
+# Age private keys (CRITICAL - never commit)
+.secrets/age-key.txt
+.secrets/*.key
+.secrets/*.md
+**/age-key.txt
+
+# Plaintext secrets files
+.secrets/secrets.yaml
+**/secrets.yaml
+!**/secrets.enc.yaml
+
+# Backup files that may contain secrets
+*.bak
+.env.bak
+.env.backup
+
+# ═══════════════════════════════════════════════════════════════
+# Safe to commit (encrypted)
+# ═══════════════════════════════════════════════════════════════
+# .env.enc - encrypted with SOPS/age
+# .secrets/secrets.enc.yaml - encrypted secrets
+# .sops.yaml - SOPS configuration (contains public key only)
+
+# ═══════════════════════════════════════════════════════════════
+# Docker & Runtime
+# ═══════════════════════════════════════════════════════════════
+**/appdata/
+**/*.log
+*.pid
+.docker/
+# Container data directories
+**/mariadb/
+**/mysql/
+**/postgres/
+**/redis/
+**/db/
+**/database/
+**/booklore/
+**/muse/data/
+**/discodrome/data/
+**/config/
+**/backups/
+**/metadata/
+**/sonobarr/
+**/flaresolverr/
+
+
+# ═══════════════════════════════════════════════════════════════
+# IDE & OS
+# ═══════════════════════════════════════════════════════════════
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

@@ -1,0 +1,54 @@
+SSH Connectivity Report
+Generated: Tue Feb  3 23:13:15 UTC 2026
+========================================
+
+WORKING HOSTS (2):
+========================================
+✓ Traefik: root@192.168.0.2
+✓ Proxmox: root@192.168.0.40
+
+FAILED HOSTS (10):
+========================================
+✗ phpIPAM: 192.168.0.116
+✗ UGREEN: 192.168.0.8
+✗ Tandoor: 192.168.0.6
+✗ AI Docker: 192.168.0.7
+✗ FoundryVTT: 192.168.0.4
+✗ TrueNAS: 192.168.0.44
+✗ NPM Plus: 192.168.0.14
+✗ Primary (osiris): 192.168.0.11
+✗ TamMediaBox: 192.168.0.13
+✗ PostgreSQL: 192.168.0.12
+
+SETUP COMMANDS FOR FAILED HOSTS:
+========================================
+# phpIPAM
+ssh-copy-id -i /root/.ssh/id_ed25519.pub root@192.168.0.116
+
+# UGREEN
+ssh-copy-id -i /root/.ssh/id_ed25519.pub root@192.168.0.8
+
+# Tandoor
+ssh-copy-id -i /root/.ssh/id_ed25519.pub root@192.168.0.6
+
+# AI Docker
+ssh-copy-id -i /root/.ssh/id_ed25519.pub root@192.168.0.7
+
+# FoundryVTT
+ssh-copy-id -i /root/.ssh/id_ed25519.pub root@192.168.0.4
+
+# TrueNAS
+ssh-copy-id -i /root/.ssh/id_ed25519.pub root@192.168.0.44
+
+# NPM Plus
+ssh-copy-id -i /root/.ssh/id_ed25519.pub root@192.168.0.14
+
+# Primary (osiris)
+ssh-copy-id -i /root/.ssh/id_ed25519.pub root@192.168.0.11
+
+# TamMediaBox
+ssh-copy-id -i /root/.ssh/id_ed25519.pub root@192.168.0.13
+
+# PostgreSQL
+ssh-copy-id -i /root/.ssh/id_ed25519.pub root@192.168.0.12
+

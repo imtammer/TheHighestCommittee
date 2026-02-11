@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  registration-api:
+    image: python:3.11-slim
+    container_name: authelia-registration
+    restart: unless-stopped
+
+    volumes:
+      - ./app:/app
+      - /opt/stacks/appdata/authelia/config:/authelia-config
+      - /opt/stacks/arrstack/appdata/pocket-id/data:/pocket-id-data
+
+    working_dir: /app
+
+    command: >
+      sh -c "pip install --quiet flask flask-cors pyyaml requests bcrypt argon2-cffi &&
+             python app.py"
+
+    ports:
+      - "5050:5050"
+
+    environment:
+      - FLASK_ENV=production
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USER=imtammer@gmail.com
+      - SMTP_PASSWORD=otei ptqs okxn wehq
+      - DOMAIN=thehighestcommittee.com
+      - AUTHELIA_CONFIG=/authelia-config/users_database.yml
+      - POCKET_ID_URL=http://security-pocket-id-1:1411
+      - POCKET_ID_API_KEY=
+
+    networks:
+      - authelia
+      - security_default
+
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:5050/health')\" || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+networks:
+  authelia:
+    external: true
+    name: authelia
+  security_default:
+    external: true
+    name: security_default

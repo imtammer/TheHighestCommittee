@@ -1,0 +1,37 @@
+services:
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:latest
+    container_name: mealie
+    restart: always
+    ports:
+      - 9925:9000
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+    volumes:
+      - ./appdata/mealie/data:/app/data/
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ}
+      ALLOW_SIGNUP: true
+      BASE_URL: https://mealie.thehighestcommittee.com
+      SMTP_HOST: mail.smtp2go.com
+      SMTP_PORT: 587
+      SMTP_FROM_NAME: TheHighestCommittee
+      SMTP_AUTH_STRATEGY: TLS
+      SMTP_FROM_EMAIL: TheHighestCommittee@thehighestcommittee.com
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      DB_ENGINE: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_SERVER: 192.168.0.12
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: mealie
+networks:
+  default:
+    name: shared
+    external: true

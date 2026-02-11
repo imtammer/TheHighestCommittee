@@ -1,0 +1,20 @@
+[0;34m[INFO][0m Starting automated cross-reference validation...
+[0;34m[INFO][0m Starting cross-reference validation...
+
+========================================
+CROSS-REFERENCE REPORT
+Generated: Tue Feb  3 22:16:53 UTC 2026
+========================================
+
+[0;34m[INFO][0m Parsing services from HOSTED_APPS.md...
+[0;34m[INFO][0m Parsing NPM Plus proxy hosts from HOSTED_APPS.md...
+[0;34m[INFO][0m Querying Traefik dynamic configuration on 192.168.0.2...
+[0;31m[ERROR][0m Cannot connect to Traefik host or directory doesn't exist
+[0;34m[INFO][0m Found 18 services in HOSTED_APPS.md
+[0;34m[INFO][0m Found 50 proxy hosts in NPM Plus section
+[0;34m[INFO][0m Found 2 routers in Traefik config
+
+[0;34m[INFO][0m Validating NPM proxy hosts against services...
+## NPM Proxy Host Validation
+
+[0;31m[ERROR][0m NPM: [0;34m[INFO][0m Parsing NPM Plus proxy hosts from HOSTED_APPS.md... →  - No matching service found!

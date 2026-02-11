@@ -1,0 +1,73 @@
+services:
+  kapowarr:
+    container_name: kapowarr
+    image: mrcas/kapowarr:latest
+    env_file:
+      - .env
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${MEDIA_ROOT}/ugreen/arrstack/appdata/kapowarr-db:/app/db
+      - ${MEDIA_ROOT}/truenas/downloads/complete/comics:/app/temp_downloads
+      - ${MEDIA_ROOT}/truenas/Comics:/comics
+    ports:
+      - 5656:5656
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+  suwayomi:
+    image: ghcr.io/suwayomi/tachidesk:latest
+    container_name: suwayomi
+    env_file:
+      - .env
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - FLARESOLVERR_ENABLED=true
+      - FLARESOLVERR_URL=http://192.168.0.11:8191
+      - WEB_UI_ENABLED=true
+      - AUTO_DOWNLOAD_CHAPTERS=true
+      - AUTO_DOWNLOAD_EXCLUDE_UNREAD=false
+      - AUTO_DOWNLOAD_NEW_CHAPTERS_LIMIT=10
+      - DOWNLOAD_AS_CBZ=true
+    volumes:
+      - ${MEDIA_ROOT}/truenas/downloads/complete/manga/:/home/suwayomi/.local/share/Tachidesk/downloads
+      - ./appdata/suwayomi:/home/suwayomi/.local/share/Tachidesk
+    ports:
+      - 4567:4567
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+  mylar3:
+    image: lscr.io/linuxserver/mylar3:nightly
+    container_name: mylar3
+    env_file:
+      - .env
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Etc/America/Los_Angeles
+    volumes:
+      - ./appdata/mylar3/config:/config
+      - ${MEDIA_ROOT}/truenas/Comics:/comics
+      - ${MEDIA_ROOT}/truenas/downloads/complete/comics/:/downloads
+    ports:
+      - 8090:8090
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+networks:
+  default:
+    name: shared
+    external: true

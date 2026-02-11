@@ -1,0 +1,83 @@
+---
+###############################################################################
+#                   Authelia Traefik Middleware Configuration                 #
+###############################################################################
+#
+# This file should be copied to the Traefik server at:
+#   /etc/traefik/conf.d/authelia-middleware.yml
+#
+# After copying, restart Traefik:
+#   ssh root@192.168.0.2 "systemctl restart traefik"
+#
+###############################################################################
+
+http:
+  middlewares:
+    # Main Authelia ForwardAuth middleware
+    # NOTE: Authelia runs on 192.168.0.11 (osiris), Traefik runs on 192.168.0.2
+    authelia:
+      forwardAuth:
+        address: "http://192.168.0.11:9091/api/verify?rd=https://authelia.thehighestcommittee.com"
+        trustForwardHeader: true
+        authResponseHeaders:
+          - "Remote-User"
+          - "Remote-Groups"
+          - "Remote-Name"
+          - "Remote-Email"
+
+    # Authelia headers middleware (already exists, but included for completeness)
+    authelia-headers:
+      headers:
+        customResponseHeaders:
+          X-Forwarded-Method: ""
+          X-Forwarded-Proto: ""
+          X-Forwarded-Host: ""
+          X-Forwarded-Uri: ""
+          X-Forwarded-For: ""
+
+###############################################################################
+# Usage Instructions:
+#
+# To protect a service with Authelia, add the authelia middleware to its router:
+#
+# Example (in primary-host.yml or remote-hosts.yml):
+#
+# http:
+#   routers:
+#     sonarr:
+#       rule: "Host(`sonarr.thehighestcommittee.com`)"
+#       service: sonarr
+#       entryPoints: [websecure]
+#       middlewares:
+#         - authelia@file  # <-- Add this line
+#       tls: {}
+#
+# Services that should NOT have authelia middleware:
+#   - authelia.thehighestcommittee.com (would create auth loop)
+#   - auth.thehighestcommittee.com (Pocket-ID)
+#   - plex.thehighestcommittee.com (uses plex-headers instead)
+#   - jellyfin.thehighestcommittee.com (bypass policy)
+#
+###############################################################################
+
+###############################################################################
+# Rollout Strategy:
+#
+# Phase 1: Test with low-risk services
+#   - Start with: Overseerr, Jellyseerr
+#   - Verify authentication works
+#   - Test SSO flow with Pocket-ID (if configured)
+#
+# Phase 2: Protect admin services
+#   - Add to: Traefik, Dozzle, Dockhand, NPM Plus
+#   - Verify admin group enforcement works
+#
+# Phase 3: Protect media management
+#   - Add to: Sonarr, Radarr, Lidarr, Readarr, Prowlarr
+#   - Add to: qBittorrent, SABnzbd
+#
+# Phase 4: Protect remaining services
+#   - Add to all other services per access control policy
+#   - Remove bypass rules gradually
+#
+###############################################################################

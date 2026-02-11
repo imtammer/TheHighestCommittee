@@ -1,0 +1,120 @@
+services:
+  enshrouded:
+    image: mornedhels/enshrouded-server:latest
+    container_name: enshrouded
+    env_file:
+      - .env
+    hostname: enshrouded
+    restart: unless-stopped
+    stop_grace_period: 90s
+    ports:
+      - 15637:15637/udp
+    volumes:
+      - /opt/stacks/arrstack/appdata/enshrouded:/opt/enshrouded
+    environment:
+      - SERVER_NAME="TheHighestCommittee"
+      - SERVER_PASSWORD=${ARK_PASS}
+      - UPDATE_CRON=*/30 * * * *
+      - PUID=${PUID}
+      - PGID=${PGID}
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 16G
+  satisfactory-server:
+    container_name: satisfactory-server
+    hostname: satisfactory-server
+    image: wolveix/satisfactory-server:latest
+    ports:
+      - 7777:7777/tcp
+      - 7777:7777/udp
+      - 8777:8888/tcp
+    volumes:
+      - /opt/stacks/arrstack/appdata/satisfactory-server:/config
+    environment:
+      - MAXPLAYERS=16
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - STEAMBETA=true
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 16G
+        reservations:
+          memory: 8G
+  palworld:
+    image: thijsvanloef/palworld-server-docker:latest
+    restart: unless-stopped
+    container_name: palworld-server
+    stop_grace_period: 30s # Set to however long you are willing to wait for the container to gracefully stop
+    ports:
+      - 8211:8211/udp
+      - 27015:27015/udp
+    environment:
+      PUID: 1000
+      PGID: 1000
+      PORT: 8211 # Optional but recommended
+      PLAYERS: 16 # Optional but recommended
+      SERVER_PASSWORD: ${PALWORLD_PASS} # Optional but recommended
+      MULTITHREADING: true
+      RCON_ENABLED: true
+      RCON_PORT: 25575
+      TZ: ${TZ}
+      ADMIN_PASSWORD: ${ARK_ADMIN_PASS}
+      COMMUNITY: true # Enable this if you want your server to show up in the community servers tab, USE WITH SERVER_PASSWORD!
+      SERVER_NAME: TheHighestCommittee PalWorld
+      SERVER_DESCRIPTION: by friends for friends...the HIGHEST friends
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 16G
+    volumes:
+      - ./appdata/palworld:/palworld/
+  asaserver:
+    build: .
+    image: acekorneya/asa_server:latest
+    container_name: asa_Server
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - BATTLEEYE=FALSE
+      - RCON_ENABLED=TRUE
+      - DISPLAY_POK_MONITOR_MESSAGE=TRUE
+      - UPDATE_SERVER=TRUE
+      - CHECK_FOR_UPDATE_INTERVAL=24
+      - UPDATE_WINDOW_MINIMUM_TIME=12:00 AM
+      - UPDATE_WINDOW_MAXIMUM_TIME=11:59 PM
+      - RESTART_NOTICE_MINUTES=30
+      - ENABLE_MOTD=FALSE
+      - MOTD=
+      - MOTD_DURATION=30
+      - MAP_NAME=Ragnarok_WP
+      - SESSION_NAME=TheHighestCommittee
+      - SERVER_ADMIN_PASSWORD=${ARK_ADMIN_PASS}
+      - SERVER_PASSWORD=${SATISFACTORY_PASS}
+      - ASA_PORT=7777
+      - RCON_PORT=27020
+      - MAX_PLAYERS=20
+      - CLUSTER_ID=THC
+      - MOD_IDS=
+      - CUSTOM_SERVER_ARGS=
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 16G
+    ports:
+      - 7779:7777/tcp
+      - 7779:7777/udp
+    volumes:
+      - ./appdata/ASA:/usr/games/.wine/drive_c/POK/Steam/steamapps/common/ARK
+      - ./appdata/ASA/ARK Survival Ascended Dedicated:/usr/games/.wine/drive_c/POK/Steam/steamapps/common/ARK Survival Ascended Dedicated Server
+      - ./appdata/ASA/Cluster:/usr/games/.wine/drive_c/POK/Steam/steamapps/common/ShooterGame
+networks:
+  default:
+    name: shared
+    external: true

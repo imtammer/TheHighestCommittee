@@ -1,0 +1,139 @@
+services:
+  navidrome:
+    image: deluan/navidrome:latest
+    user: ${PUID}:${PGID}
+    ports:
+      - 4533:4533
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ./appdata/navidrome/data:/data
+      - ${MEDIA_ROOT}/truenas/Music:/music
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+  lidify:
+    image: chevron7locked/lidify:latest
+    container_name: lidify
+    #  user: ${PUID}:${PGID}
+    ports:
+      - 3030:3030
+    volumes:
+      - ${MEDIA_ROOT}/truenas/Music:/music
+      - ./appdata/lidify_data:/data
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 3G
+  sonobarr:
+    image: ghcr.io/dodelidoo-labs/sonobarr:latest
+    container_name: sonobarr
+    env_file:
+      - .env
+    volumes:
+      - ./sonobarr/config:/sonobarr/config
+      - ${MEDIA_ROOT}/truenas/Music:/music
+    ports:
+      - 5003:5000
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+  blissful:
+    image: angablade/blissful:latest
+    container_name: blissful
+    ports:
+      - 7373:7373
+    volumes:
+      - ./appdata/blissfull/:/app/config.json
+      - ${MEDIA_ROOT}/truenas/downloads/complete/music:/app/downloads
+      - ${MEDIA_ROOT}/truenas/Music:/music
+    environment:
+      - PORT=7373
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - LIDARR_URL=http://192.168.0.11:8686
+      - LIDARR_API_KEY=${LIDARR_API_KEY}
+      - JELLYFIN_URL=https://jellyfin.thehighestcommittee.com
+      - JELLYFIN_API_KEY=${JELLYFIN_API_KEY}
+      - PLEX_URL=http://192.168.1.13:32400
+    restart: unless-stopped
+    # Optional: Add logging
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+  slskd:
+    container_name: slskd
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - SLSKD_REMOTE_CONFIGURATION=true
+      - SLSKD_SHARED_DIR=/music;/ebooks
+    ports:
+      - 5030:5030
+      - 5031:5031
+      - 50300:50300
+    volumes:
+      - ${MEDIA_ROOT}/ugreen/arrstack/slskd:/app
+      - ${MEDIA_ROOT}/truenas/Music:/music
+      - ${MEDIA_ROOT}/truenas/Books:/ebooks
+      - ${MEDIA_ROOT}/truenas/downloads/complete/music/:/app/downloads
+    user: ${PUID}:${PGID}
+    image: slskd/slskd:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+  soularr:
+    image: mrusse08/soularr:latest
+    container_name: soularr
+    hostname: soularr
+    user: ${PUID}:${PGID}
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - SCRIPT_INTERVAL=300
+    volumes:
+      - ${MEDIA_ROOT}/truenas/downloads/complete/music/:/downloads
+      - ./appdata/soularr:/data
+
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+networks:
+  default:
+    name: shared
+    external: true

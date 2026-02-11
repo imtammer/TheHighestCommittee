@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ollama ps:*)",
+      "Bash(ssh:*)",
+      "Bash(curl:*)",
+      "Bash(ping:*)",
+      "Bash(nmap:*)",
+      "Bash(nc:*)"
+    ]
+  }
+}
