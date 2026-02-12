@@ -10,6 +10,11 @@ services:
       - TZ=${TZ}
       - UMASK=022
       - LOG_LEVEL=info
+      - POSTGRES_HOST=192.168.0.12
+      - POSTGRES_MAIN_DB=sonarr-main
+      - POSTGRES_LOG_DB=sonarr-log
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     deploy:
       resources:
         limits:
@@ -33,6 +38,11 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - LOG_LEVEL=info
+      - POSTGRES_HOST=192.168.0.12
+      - POSTGRES_MAIN_DB=radarr-main
+      - POSTGRES_LOG_DB=radarr-log
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     deploy:
       resources:
         limits:
@@ -70,6 +80,11 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - LOG_LEVEL=info
+      - POSTGRES_HOST=192.168.0.12
+      - POSTGRES_MAIN_DB=prowlarr-main
+      - POSTGRES_LOG_DB=prowlarr-log
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     deploy:
       resources:
         limits:
@@ -106,6 +121,11 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - LOG_LEVEL=info
+      - POSTGRES_HOST=192.168.0.12
+      - POSTGRES_MAIN_DB=lidarr-main
+      - POSTGRES_LOG_DB=lidarr-log
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     deploy:
       resources:
         limits:
