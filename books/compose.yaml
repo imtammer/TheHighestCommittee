@@ -144,6 +144,8 @@ services:
       - DATABASE_URL=jdbc:postgresql://192.168.0.12:5432/booklore
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=postgres
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_LOB_NON_CONTEXTUAL_CREATION=true
       - BOOKLORE_PORT=6060
       - SWAGGER_ENABLED=false
       - FORCE_DISABLE_OIDC=false                            # Set to 'true' to force-disable OIDC and allow internal login, regardless of UI config
