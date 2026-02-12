@@ -1,0 +1,25 @@
+FROM booklore/booklore:latest
+
+USER root
+WORKDIR /app
+
+# Download PostgreSQL JDBC Driver and Flyway Postgres Support
+ADD https://jdbc.postgresql.org/download/postgresql-42.7.2.jar /tmp/postgresql.jar
+ADD https://repo1.maven.org/maven2/org/flywaydb/flyway-database-postgresql/11.7.2/flyway-database-postgresql-11.7.2.jar /tmp/flyway-postgres.jar
+
+# Install unzip, explode jar, inject driver, and cleanup
+RUN apk add --no-cache unzip && \
+    unzip -q /app/app.jar -d /app/exploded && \
+    rm /app/app.jar && \
+    mv /tmp/postgresql.jar /app/exploded/BOOT-INF/lib/ && \
+    mv /tmp/flyway-postgres.jar /app/exploded/BOOT-INF/lib/ && \
+    apk del unzip
+
+# Ensure correct permissions
+RUN chown -R 1000:1000 /app
+
+USER 1000
+WORKDIR /app/exploded
+
+# Run using the exploded jar structure with JarLauncher
+ENTRYPOINT ["java", "-cp", ".", "org.springframework.boot.loader.launch.JarLauncher"]

@@ -132,7 +132,10 @@ services:
       - ${MEDIA_ROOT}/truenas/downloads/complete/:/downloads
       - ${MEDIA_ROOT}/truenas/:${MEDIA_ROOT}/truenas/
   booklore:
-    image: booklore/booklore:latest
+    image: booklore-postgres:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     container_name: booklore
     environment:
       - USER_ID=${USER_ID}
