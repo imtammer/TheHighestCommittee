@@ -148,7 +148,7 @@ services:
       - SWAGGER_ENABLED=false
       - FORCE_DISABLE_OIDC=false                            # Set to 'true' to force-disable OIDC and allow internal login, regardless of UI config
     ports:
-      - "6060:6060"
+      - "6060:8080"
     volumes:
       - ./appdata/booklore/data:/app/data       # Application data (settings, metadata, cache, etc.). Persist this folder to retain your library state across container restarts.
       - ${MEDIA_ROOT}/truenas/Books:/books         # Primary book library folder. Mount your collection here so BookLore can access and organize your books.
@@ -156,7 +156,7 @@ services:
       - ${MEDIA_ROOT}/truenas/Comics:/comics
       - ${MEDIA_ROOT}/truenas/manga:/manga
     healthcheck:
-      test: wget -q -O - http://localhost:6060/api/v1/healthcheck
+      test: wget -q -O - http://localhost:8080/api/v1/healthcheck
       interval: 60s
       retries: 5
       start_period: 60s
