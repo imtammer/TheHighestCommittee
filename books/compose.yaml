@@ -138,15 +138,12 @@ services:
       - USER_ID=${USER_ID}
       - GROUP_ID=1000
       - TZ=${TZ}
-      - DATABASE_URL=jdbc:mariadb://mariadb:3306/booklore
-      - DATABASE_USERNAME=${DATABASE_USERNAME}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_URL=jdbc:postgresql://192.168.0.12:5432/booklore
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
       - BOOKLORE_PORT=6060
       - SWAGGER_ENABLED=false
       - FORCE_DISABLE_OIDC=false                            # Set to 'true' to force-disable OIDC and allow internal login, regardless of UI config
-    depends_on:
-      mariadb:
-        condition: service_healthy
     ports:
       - "6060:6060"
     volumes:
@@ -168,30 +165,6 @@ services:
           cpus: '1.0'
           memory: 1G
 
-  mariadb:
-    image: lscr.io/linuxserver/mariadb:11.4.8
-    container_name: mariadb
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=Etc/UTC
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}  # Use a strong password for the database's root user, should be different from MYSQL_PASSWORD
-      - MYSQL_DATABASE=booklore
-      - MYSQL_USER=${MYSQL_USER}                        # Must match DATABASE_USERNAME defined in the booklore container
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}        # Use a strong password; must match DATABASE_PASSWORD defined in the booklore container
-    volumes:
-      - ./appdata/mariadb/config:/config
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 1G
-    healthcheck:
-      test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost" ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 networks:
   default:
     name: shared

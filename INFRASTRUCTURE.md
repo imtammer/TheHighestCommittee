@@ -86,7 +86,7 @@ graph TD
 <td>🗄️ <strong>PostgreSQL</strong></td>
 <td><code>192.168.0.12</code></td>
 <td>Central DB</td>
-<td>21 databases</td>
+<td>22 databases</td>
 <td>—</td>
 </tr>
 <tr>
@@ -462,13 +462,13 @@ devices:
 postgresql://postgres:postgres@192.168.0.12:5432/DATABASE_NAME
 ```
 
-### 📊 Databases (21 total)
+### 📊 Databases (22 total)
 
 | 📁 Category | 🗄️ Databases |
 |:------------|:-------------|
 | **Arr Stack** | sonarr-main, sonarr-log, radarr-main, radarr-log, lidarr-main, lidarr-log |
 | | prowlarr-main, prowlarr-log, readarr-main, readarr-log, readarr-cache |
-| | listenarr-main, listenarr-log, listenarr-cache |
+| | listenarr-main, listenarr-log, listenarr-cache, booklore |
 | **Apps** | mealie, ryot, suggestarr, seerr-db |
 | **AI** | anythingllm, ollama |
 | **System** | postgres |

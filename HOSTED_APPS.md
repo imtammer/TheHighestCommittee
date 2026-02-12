@@ -64,7 +64,7 @@
 <tr><td>🤖</td><td><strong>AI Docker</strong></td><td><code>192.168.0.7</code></td><td>Ollama, Paperless, Whisper</td></tr>
 <tr><td>💾</td><td><strong>TrueNAS</strong></td><td><code>192.168.0.44</code></td><td>qBittorrent, SABnzbd, Dockge</td></tr>
 <tr><td>📦</td><td><strong>UGREEN</strong></td><td><code>192.168.0.8</code></td><td>Storage only (Docker-capable)</td></tr>
-<tr><td>🗄️</td><td><strong>PostgreSQL</strong></td><td><code>192.168.0.12</code></td><td>21 databases</td></tr>
+<tr><td>🗄️</td><td><strong>PostgreSQL</strong></td><td><code>192.168.0.12</code></td><td>22 databases</td></tr>
 <tr><td>🌐</td><td><strong>phpIPAM</strong></td><td><code>192.168.0.116</code></td><td>IP management</td></tr>
 <tr><td>🖥️</td><td><strong>Proxmox</strong></td><td><code>192.168.0.40</code></td><td>Hypervisor (3 VMs, 6 LXCs)</td></tr>
 <tr><td>🍳</td><td><strong>Tandoor</strong></td><td><code>192.168.0.6</code></td><td>Recipe server</td></tr>
@@ -331,7 +331,7 @@ docker exec security-pocket-id-1 /app/pocket-id healthcheck
 | 🏷️ | Name | Server | Port | External URL | Widget | Purpose |
 |:--:|:-----|:-------|:-----|:-------------|:------:|:--------|
 | 🌐 | **phpIPAM** | phpIPAM (LXC) | 80 | [192.168.0.116](http://192.168.0.116/) | — | IP address management |
-| 🗄️ | **PostgreSQL** | Postgres (LXC) | 5432 | — | — | Central database (21 DBs) |
+| 🗄️ | **PostgreSQL** | Postgres (LXC) | 5432 | — | — | Central database (22 DBs) |
 | 🔧 | **Adminer** | Postgres (LXC) | 80 | [192.168.0.12/adminer/](http://192.168.0.12/adminer/) | — | Database web UI |
 
 ### 🖥️ Virtualization & Storage
@@ -419,6 +419,7 @@ docker exec security-pocket-id-1 /app/pocket-id healthcheck
 | prowlarr-main, prowlarr-log | Prowlarr | Indexers |
 | readarr-main, readarr-log, readarr-cache | Readarr | Books |
 | listenarr-main, listenarr-log, listenarr-cache | ListenArr | Audiobooks |
+| booklore | BookLore | Books |
 | mealie | Mealie | Recipes |
 | ryot | Ryot | Tracking |
 | suggestarr | SuggestArr | AI |
