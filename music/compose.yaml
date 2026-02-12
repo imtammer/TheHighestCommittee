@@ -25,7 +25,7 @@ services:
       - 3030:3030
     volumes:
       - ${MEDIA_ROOT}/truenas/Music:/music
-      - ./appdata/lidify_data:/data
+      - ./appdata/lidify/data:/data
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -44,7 +44,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./sonobarr/config:/sonobarr/config
+      - ./appdata/sonobarr/config:/sonobarr/config
       - ${MEDIA_ROOT}/truenas/Music:/music
     ports:
       - 5003:5000
@@ -102,7 +102,7 @@ services:
       - 5031:5031
       - 50300:50300
     volumes:
-      - ${MEDIA_ROOT}/ugreen/arrstack/slskd:/app
+      - ./appdata/slskd:/app
       - ${MEDIA_ROOT}/truenas/Music:/music
       - ${MEDIA_ROOT}/truenas/Books:/ebooks
       - ${MEDIA_ROOT}/truenas/downloads/complete/music/:/app/downloads

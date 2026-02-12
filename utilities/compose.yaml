@@ -107,7 +107,7 @@ services:
     ports:
       - 8191:8191
     volumes:
-      - ./flaresolverr/config/:/config
+      - ./appdata/flaresolverr/config/:/config
     restart: unless-stopped
 volumes:
   termix-data:

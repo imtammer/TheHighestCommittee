@@ -37,7 +37,7 @@ services:
           cpus: '1.0'
           memory: 1G
     volumes:
-      - ${MEDIA_ROOT}/ugreen/arrstack/appdata/tunarr/data:/config/tunarr
+      - ./appdata/tunarr/data:/config/tunarr
   huntarr:
     image: huntarr/huntarr:latest
     container_name: huntarr

@@ -9,7 +9,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ${MEDIA_ROOT}/ugreen/arrstack/appdata/kapowarr-db:/app/db
+      - ./appdata/kapowarr/db:/app/db
       - ${MEDIA_ROOT}/truenas/downloads/complete/comics:/app/temp_downloads
       - ${MEDIA_ROOT}/truenas/Comics:/comics
     ports:

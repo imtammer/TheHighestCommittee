@@ -10,7 +10,7 @@ services:
     ports:
       - 15637:15637/udp
     volumes:
-      - /opt/stacks/arrstack/appdata/enshrouded:/opt/enshrouded
+      - ./appdata/enshrouded:/opt/enshrouded
     environment:
       - SERVER_NAME="TheHighestCommittee"
       - SERVER_PASSWORD=${ARK_PASS}
@@ -31,7 +31,7 @@ services:
       - 7777:7777/udp
       - 8777:8888/tcp
     volumes:
-      - /opt/stacks/arrstack/appdata/satisfactory-server:/config
+      - ./appdata/satisfactory-server:/config
     environment:
       - MAXPLAYERS=16
       - PGID=${PGID}

@@ -48,7 +48,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
     volumes:
-      - ./appdata/bookshelf_config:/config
+      - ./appdata/readarr/config:/config
       - ${MEDIA_ROOT}/:${MEDIA_ROOT}/
     image: ghcr.io/pennydreadful/bookshelf:hardcover
     deploy:
@@ -64,7 +64,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
     volumes:
-      - ./appdata/bookshelf_audio/config:/config
+      - ./appdata/listenarr/config:/config
       - ${MEDIA_ROOT}/:${MEDIA_ROOT}/
     image: ghcr.io/pennydreadful/bookshelf:hardcover
     deploy:
@@ -150,7 +150,7 @@ services:
     ports:
       - "6060:6060"
     volumes:
-      - ./booklore/data:/app/data       # Application data (settings, metadata, cache, etc.). Persist this folder to retain your library state across container restarts.
+      - ./appdata/booklore/data:/app/data       # Application data (settings, metadata, cache, etc.). Persist this folder to retain your library state across container restarts.
       - ${MEDIA_ROOT}/truenas/Books:/books         # Primary book library folder. Mount your collection here so BookLore can access and organize your books.
       - ${MEDIA_ROOT}/truenas/downloads/complete/books:/bookdrop   # BookDrop folder. Files placed here are automatically detected and prepared for import.
       - ${MEDIA_ROOT}/truenas/Comics:/comics
@@ -180,7 +180,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}                        # Must match DATABASE_USERNAME defined in the booklore container
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}        # Use a strong password; must match DATABASE_PASSWORD defined in the booklore container
     volumes:
-      - ./mariadb/config:/config
+      - ./appdata/mariadb/config:/config
     restart: unless-stopped
     deploy:
       resources:

@@ -17,11 +17,11 @@ services:
             - STEAMGRIDDB_API_KEY=${STEAMGRIDDB_API_KEY} # https://docs.romm.app/latest/Getting-Started/Metadata-Providers/#steamgriddb
             - HASHEOUS_API_ENABLED=true # https://docs.romm.app/latest/Getting-Started/Metadata-Providers/#hasheous
         volumes:
-            - ${MEDIA_ROOT}/ugreen/arrstack/romm/romm_resources:/romm/resources # Resources fetched from IGDB (covers, screenshots, etc.)
-            - ${MEDIA_ROOT}/ugreen/arrstack/romm/romm_redis_data:/redis-data # Cached data for background tasks
+            - ./appdata/romm/resources:/romm/resources # Resources fetched from IGDB (covers, screenshots, etc.)
+            - ./appdata/romm/redis_data:/redis-data # Cached data for background tasks
             - ${MEDIA_ROOT}/truenas/roms:/romm/library # Your game library. Check https://github.com/rommapp/romm?tab=readme-ov-file#folder-structure for more details.
             - ${MEDIA_ROOT}/truenas/roms_assets:/romm/assets # Uploaded saves, states, etc.
-            - ${MEDIA_ROOT}/ugreen/arrstack/romm/config:/romm/config # Path where config.yml is stored
+            - ./appdata/romm/config:/romm/config # Path where config.yml is stored
         ports:
             - 8808:8080
         depends_on:
@@ -44,7 +44,7 @@ services:
             - MARIADB_USER=${MARIADB_USER}
             - MARIADB_PASSWORD=${MARIADB_PASSWORD}
         volumes:
-            - ${MEDIA_ROOT}/ugreen/arrstack/romm/mysql_data:/var/lib/mysql
+            - ./appdata/romm-db/mysql_data:/var/lib/mysql
         healthcheck:
             test: "mariadb-admin ping -h localhost -uroot -p${MARIADB_ROOT_PASSWORD}"
             start_period: 30s

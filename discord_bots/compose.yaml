@@ -19,7 +19,7 @@ services:
     image: ghcr.io/museofficial/muse:pr-1287
     restart: always
     volumes:
-      - ./muse/data:/data
+      - ./appdata/muse/data:/data
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
       - YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
@@ -46,7 +46,7 @@ services:
       - DISCORD_TEST_GUILD=${DISCORD_TEST_GUILD}
       - DISCORD_OWNER_ID=${DISCORD_OWNER_ID}
     volumes:
-      - ./discodrome/data/:/data
+      - ./appdata/discodrome/data/:/data
     deploy:
       resources:
         limits:

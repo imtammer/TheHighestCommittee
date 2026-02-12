@@ -2,8 +2,6 @@ services:
   sonarr:
     image: ghcr.io/linuxserver/sonarr:develop
     container_name: sonarr
-    env_file:
-      - .env
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -21,7 +19,7 @@ services:
           cpus: '2.0'
           memory: 2G
     volumes:
-      - /opt/stacks/arrstack/appdata/sonarr/config:/config
+      - ./appdata/sonarr/config:/config
       - ${MEDIA_ROOT}/truenas/tv/:/tv
       - ${MEDIA_ROOT}/truenas/anime/:/anime
       - ${MEDIA_ROOT}/ugreen/downloads/:/downloads
@@ -30,11 +28,10 @@ services:
       - 8989:8989
     restart: unless-stopped
   radarr:
-    image: lscr.io/linuxserver/radarr:nightly
+    image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     environment:
       - PUID=${PUID}
-      - PGID=${PGID}
       - PGID=${PGID}
       - TZ=${TZ}
       - LOG_LEVEL=info
@@ -49,7 +46,7 @@ services:
           cpus: '1.0'
           memory: 2G
     volumes:
-      - /opt/stacks/arrstack/appdata/radarr/config:/config
+      - ./appdata/radarr/config:/config
       - ${MEDIA_ROOT}/ugreen/movies:/movies
       - ${MEDIA_ROOT}/ugreen/downloads:/downloads
       - ${MEDIA_ROOT}/truenas/:${MEDIA_ROOT}/truenas
@@ -62,7 +59,7 @@ services:
     ports:
       - 6868:6868
     volumes:
-      - /opt/stacks/arrstack/appdata/profilarr/:/config
+      - ./appdata/profilarr/:/config
     environment:
       - TZ=${TZ}
     restart: unless-stopped
@@ -72,11 +69,10 @@ services:
           cpus: '0.25'
           memory: 256M
   prowlarr:
-    image: bitlessbyte/prowlarr:latest  #  lscr.io/linuxserver/prowlarr:nightly
+    image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     environment:
       - PUID=${PUID}
-      - PGID=${PGID}
       - PGID=${PGID}
       - TZ=${TZ}
       - LOG_LEVEL=info
@@ -91,7 +87,7 @@ services:
           cpus: '0.5'
           memory: 1G
     volumes:
-      - /opt/stacks/arrstack/appdata/prowlarr/config:/config
+      - ./appdata/prowlarr/config:/config
     ports:
       - 9696:9696
     restart: unless-stopped
@@ -103,8 +99,14 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - NODE_OPTIONS=--max-old-space-size=2048
+      - DB_TYPE=postgres
+      - DB_HOST=${POSTGRES_HOST}
+      - DB_PORT=5432
+      - DB_NAME=seerr-db
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASS=${POSTGRES_PASSWORD}
     volumes:
-      - /opt/stacks/arrstack/appdata/overseerr/config:/app/config
+      - ./appdata/overseerr/config:/app/config
     ports:
       - 5055:5055
     restart: unless-stopped
@@ -119,7 +121,6 @@ services:
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
-      - PGID=${PGID}
       - TZ=${TZ}
       - LOG_LEVEL=info
       - POSTGRES_HOST=192.168.0.12
@@ -133,7 +134,7 @@ services:
           cpus: '2.0'
           memory: 2G
     volumes:
-      - /opt/stacks/arrstack/appdata/lidarr/config:/config
+      - ./appdata/lidarr/config:/config
       - ${MEDIA_ROOT}/ugreen/downloads:/downloads
       - ${MEDIA_ROOT}/truenas/Music:/music
       - ${MEDIA_ROOT}/truenas/:${MEDIA_ROOT}/truenas
@@ -153,7 +154,7 @@ services:
     ports:
       - 5056:5056
     volumes:
-      - /opt/stacks/arrstack/appdata/seerr/config:/app/config
+      - ./appdata/seerr/config:/app/config
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://192.168.0.11:5056/api/v1/status"]
       start_period: 20s
@@ -174,7 +175,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - /opt/stacks/arrstack/appdata/bazarr/config:/config
+      - ./appdata/bazarr/config:/config
       - ${MEDIA_ROOT}/ugreen/movies/:/movies
       - ${MEDIA_ROOT}/truenas/tv/:/tv
       - ${MEDIA_ROOT}/truenas/anime/:/anime
@@ -195,7 +196,7 @@ services:
       - UMASK=022
       - TZ=${TZ}
     volumes:
-      - /opt/stacks/arrstack/appdata/sportarr/config:/config
+      - ./appdata/sportarr/config:/config
       - ${MEDIA_ROOT}/truenas/sports:/sports
       - ${MEDIA_ROOT}/truenas/downloads/complete/:/downloads
     ports:
@@ -205,7 +206,7 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: 512M
+          memory: 1G
 networks:
   default:
     name: shared
