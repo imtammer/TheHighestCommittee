@@ -102,6 +102,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
+      - NODE_OPTIONS=--max-old-space-size=2048
     volumes:
       - /opt/stacks/arrstack/appdata/overseerr/config:/app/config
     ports:
@@ -111,7 +112,7 @@ services:
       resources:
         limits:
           cpus: '1.0'
-          memory: 1G
+          memory: 2G
   lidarr:
     image: ghcr.io/hotio/lidarr:pr-plugins
     container_name: lidarr
